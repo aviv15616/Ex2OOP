@@ -1,9 +1,11 @@
 package gym.management.Sessions;
+import gym.customers.Client;
 import gym.management.*;
 
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 
@@ -11,12 +13,20 @@ public class Session {
     private SessionType type;
     private ForumType forum;
     private Date date;
+    private ArrayList <Client> registered=new ArrayList<>();
+    private int price;
+    private int maxCap;
+
     private Instructor instructor;
-    public Session(SessionType type,String date,ForumType forum, Instructor instructor){
+    public Session(SessionType type,String date,ForumType forum, Instructor instructor,int price, int maxCap){
         this.type=type;
         this.date=parseDate(date);
         this.forum=forum;
         this.instructor=instructor;
+        this.price=price;
+        this.maxCap=maxCap;
+
+
     }
     private Date parseDate(String dateString) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
@@ -26,5 +36,23 @@ public class Session {
             System.out.println("Error parsing date: " + e.getMessage());
             return null;
         }
+    }
+    public Date getDate(){
+        return date;
+    }
+    public ForumType getForum(){
+        return forum;
+    }
+    public ArrayList<Client> getRegistered(){
+        return registered;
+    }
+    public int getMaxCap() {
+        return maxCap;
+    }
+    public int getPrice() {
+        return price;
+    }
+    public void addClient(Client c1){
+        registered.add(c1);
     }
 }

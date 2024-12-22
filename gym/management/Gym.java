@@ -39,5 +39,6 @@ public class Gym {
 
     @Override
     public String toString() {
+        return null;
     }
 }

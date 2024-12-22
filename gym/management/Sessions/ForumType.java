@@ -1,4 +1,8 @@
 package gym.management.Sessions;
 
-public class ForumType {
+public enum ForumType {
+    Female,
+    Male,
+    Seniors,
+    All
 }

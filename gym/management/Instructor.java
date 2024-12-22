@@ -15,5 +15,8 @@ public class Instructor{
         this.salary=salary;
         this.sessionTypes=sessionTypes;
     }
+    public ArrayList<SessionType> getSessionTypes(){
+        return sessionTypes;
+    }
 
 }
