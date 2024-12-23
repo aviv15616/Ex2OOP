@@ -72,12 +72,12 @@ public class Main {
             System.out.println(e.getMessage());
         }
 
-        gymSecretary.registerClientToLesson(c1, s1);
-        gymSecretary.registerClientToLesson(c1, s2);
-        gymSecretary.registerClientToLesson(c1, s4);
-        gymSecretary.registerClientToLesson(c4, s4);
-        gymSecretary.registerClientToLesson(c1, s3);
-        gymSecretary.registerClientToLesson(c5, s2);
+        gymSecretary.registerClientToLesson(c1, s1);//good
+        gymSecretary.registerClientToLesson(c1, s2);//not in the future
+        gymSecretary.registerClientToLesson(c1, s4);//good
+        gymSecretary.registerClientToLesson(c4, s4);//good
+        gymSecretary.registerClientToLesson(c1, s3);//not senior
+        gymSecretary.registerClientToLesson(c5, s2);//not gender, not future,
         gymSecretary.registerClientToLesson(c5, s2);
 
         gymSecretary.registerClientToLesson(c1, s5);

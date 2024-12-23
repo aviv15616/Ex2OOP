@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class Secretary {
     private final Person person;
@@ -36,7 +37,8 @@ public class Secretary {
     private void logAction(String action) {
         gym.getActionLog().add(action);
     }
-    private String dateToString(Date date){
+
+    private String dateToString(Date date) {
         return new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
     }
 
@@ -46,15 +48,17 @@ public class Secretary {
         int age = Person.calcDateDiff(birthdate);
 
         if (age < 18) throw new InvalidAgeException("Error: Client must be at least 18 years old to register");
-        Client client=new Client(person.getName(),person.getBalance(),person.getGender(),person.getBirthdate(),person.getId());
+        Client client = new Client(person.getName(), person.getBalance(), person.getGender(), person.getBirthdate(), person.getId());
         if (gym.clients.contains(client)) throw new DuplicateClientException("Error: The client is already registered");
         gym.clients.add(client);
         logAction("Registered new client: " + person.getName());
         return client;
     }
-    public Person getPerson(){
+
+    public Person getPerson() {
         return person;
     }
+
     private int calcDateDiff(Date checkedDate) {
         Calendar birthCalendar = Calendar.getInstance();
         birthCalendar.setTime(checkedDate);
@@ -95,44 +99,40 @@ public class Secretary {
         int clientAge = Person.calcDateDiff(c1.getBirthdate());
         int clientBalance = c1.getBalance();
         boolean isSenior = clientAge >= 65;
-
-        // Check if the client has enough balance
-        if (clientBalance < sessionPrice) {
-            logAction("Failed registration: Client doesn't have enough balance");
-            return false;
-        }
-
-        // Check if the client's gender matches the session's gender requirements
-        if ((type == ForumType.Female && gender != Gender.Female) || (type == ForumType.Male && gender != Gender.Male)) {
-            logAction("Failed registration: Client's gender doesn't match the session's gender requirements");
-            return false;
-        }
-
-        // Check if the client is old enough for a seniors session
-        if (type == ForumType.Seniors && !isSenior) {
-            logAction("Failed registration: Client doesn't meet the age requirements for this session (Seniors)");
-            return false;
-        }
-
+        List<String> errors = new ArrayList<>();
         // Check if the session is in the future
         if (!isSessionInTheFuture(sessionDate)) {
-            logAction("Failed registration: Session is not in the future");
-            return false;
+            errors.add("Failed registration: Session is not in the future");
         }
-
+        // Check if the client's gender matches the session's gender requirements
+        if ((type == ForumType.Female && gender != Gender.Female) || (type == ForumType.Male && gender != Gender.Male)) {
+            errors.add("Failed registration: Client's gender doesn't match the session's gender requirements");
+        }
+        // Check if the client is old enough for a seniors session
+        if (type == ForumType.Seniors && !isSenior) {
+            errors.add("Failed registration: Client doesn't meet the age requirements for this session (Seniors)");
+        }
+        // Check if the client has enough balance
+        if (clientBalance < sessionPrice) {
+            errors.add("Failed registration: Client doesn't have enough balance");
+        }
         // Check for available spots in the session
         if (s2.getRegistered().size() == s2.getMaxCap()) {
-            logAction("Failed registration: No available spots for session");
+            errors.add("Failed registration: No available spots for session");
+        }
+        if (!errors.isEmpty()) {
+            for (String s : errors) logAction(s);
             return false;
         }
-
         return true;
     }
 
     public void registerClientToLesson(Client c1, Session s2) throws DuplicateClientException, ClientNotRegisteredException {
         if (!isCurrSecretary()) throw new NullPointerException();
-        if (!gym.clients.contains(c1)) throw new ClientNotRegisteredException("Error: The client is not registered with the gym and cannot enroll in lessons");
-        if (s2.getRegistered().contains(c1)) throw new DuplicateClientException("Error: The client is already registered for this lesson");
+        if (!gym.clients.contains(c1))
+            throw new ClientNotRegisteredException("Error: The client is not registered with the gym and cannot enroll in lessons");
+        if (s2.getRegistered().contains(c1))
+            throw new DuplicateClientException("Error: The client is already registered for this lesson");
         if (canAccessSession(c1, s2)) {
             s2.addClient(c1);
             c1.setBalance(c1.getBalance() - s2.getPrice());
@@ -140,6 +140,7 @@ public class Secretary {
             logAction("Registered client: " + c1.getName() + " to session: " + s2.getType() + " on " + convertDateFormat(s2.getDate()) + " for price: " + s2.getPrice());
         }
     }
+
     private boolean isSessionInTheFuture(String sessionDate) {
         try {
             // Define the input format for the session date (23-01-2025 10:00)
@@ -168,6 +169,7 @@ public class Secretary {
         if (!isCurrSecretary()) throw new NullPointerException();
         return gym.balance;
     }
+
     public static String convertDateFormat(String inputDate) {
         try {
             // Define the input format (23-01-2025 10:00)
@@ -186,6 +188,7 @@ public class Secretary {
             return null; // Return null in case of parsing error
         }
     }
+
     public Session addSession(SessionType type, String date, ForumType forum, Instructor instructor) throws InstructorNotQualifiedException {
         if (!isCurrSecretary()) throw new NullPointerException();
         Session session = SessionFactory.createSession(type, date, forum, instructor);
@@ -201,6 +204,7 @@ public class Secretary {
     }
 
     public void paySalaries() {
+
         logAction("Salaries have been paid to all employees");
     }
 
