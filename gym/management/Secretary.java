@@ -48,7 +48,7 @@ public class Secretary {
         int age = Person.calcDateDiff(birthdate);
 
         if (age < 18) throw new InvalidAgeException("Error: Client must be at least 18 years old to register");
-        Client client = new Client(person.getName(), person.getBalance(), person.getGender(), person.getBirthdate(), person.getId());
+        Client client = new Client(person);
         if (gym.clients.contains(client)) throw new DuplicateClientException("Error: The client is already registered");
         gym.clients.add(client);
         logAction("Registered new client: " + person.getName());
@@ -88,16 +88,16 @@ public class Secretary {
         if (!isCurrSecretary()) throw new NullPointerException();
         if (!gym.clients.contains(c2)) throw new ClientNotRegisteredException("Error: Client not registered");
         gym.clients.remove(c2);
-        logAction("Unregistered client: " + c2.getName());
+        logAction("Unregistered client: " + c2.getPerson().getName());
     }
 
     private boolean canAccessSession(Client c1, Session s2) {
         String sessionDate = s2.getDate();
         ForumType type = s2.getForum();
-        Gender gender = c1.getGender();
+        Gender gender = c1.getPerson().getGender();
         int sessionPrice = s2.getPrice();
-        int clientAge = Person.calcDateDiff(c1.getBirthdate());
-        int clientBalance = c1.getBalance();
+        int clientAge = Person.calcDateDiff(c1.getPerson().getBirthdate());
+        int clientBalance = c1.getPerson().getBalance();
         boolean isSenior = clientAge >= 65;
         List<String> errors = new ArrayList<>();
         // Check if the session is in the future
@@ -135,9 +135,9 @@ public class Secretary {
             throw new DuplicateClientException("Error: The client is already registered for this lesson");
         if (canAccessSession(c1, s2)) {
             s2.addClient(c1);
-            c1.setBalance(c1.getBalance() - s2.getPrice());
+            c1.getPerson().setBalance(c1.getPerson().getBalance() - s2.getPrice());
             setGymBalance(getGymBalance() + s2.getPrice());
-            logAction("Registered client: " + c1.getName() + " to session: " + s2.getType() + " on " + convertDateFormat(s2.getDate()) + " for price: " + s2.getPrice());
+            logAction("Registered client: " + c1.getPerson().getName() + " to session: " + s2.getType() + " on " + convertDateFormat(s2.getDate()) + " for price: " + s2.getPrice());
         }
     }
 

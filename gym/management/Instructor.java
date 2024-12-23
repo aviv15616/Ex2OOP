@@ -41,6 +41,11 @@ public class Instructor {
         }
         return string;
     }
+    @Override
+    public boolean equals(Object a){
+        Instructor i1= (Instructor) a;
+        return i1.getPerson().getId()==person.getId();
+    }
 
 
     @Override

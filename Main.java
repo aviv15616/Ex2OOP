@@ -82,7 +82,7 @@ public class Main {
 
         gymSecretary.registerClientToLesson(c1, s5);//good
         gymSecretary.registerClientToLesson(c2, s5);
-        gymSecretary.registerClientToLesson(c3, s5);
+        gymSecretary.registerClientToLesson(c3, s5);//good
         gymSecretary.registerClientToLesson(c4, s5);
         gymSecretary.registerClientToLesson(c6, s5);
         gymSecretary.registerClientToLesson(c7, s5);
