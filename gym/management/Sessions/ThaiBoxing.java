@@ -4,7 +4,7 @@ import gym.management.Instructor;
 
 public class ThaiBoxing extends Session {
     public ThaiBoxing(String date,ForumType forum, Instructor instructor,int price,int maxCap){
-        super(SessionType.Pilates, date, forum, instructor,price,maxCap);
+        super(SessionType.ThaiBoxing, date, forum, instructor,price,maxCap);
     }
 
 }

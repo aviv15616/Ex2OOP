@@ -7,117 +7,220 @@ import gym.customers.Person;
 import gym.management.Sessions.*;
 import gym.management.Sessions.SessionType;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 public class Secretary {
-    private Person person;
-    private int salary;
+    private final Person person;
+    private final int salary;
+    private final Gym gym = Gym.getInstance();
 
-    private Gym gym=Gym.getInstance();
 
     public Secretary(Person person, int salary) {
         this.person = person;
         this.salary = salary;
     }
-    private boolean isCurrSecretary(){
+
+    private boolean isCurrSecretary() {
         return gym.getSecretary().equals(this);
     }
 
-
-
-    public Client registerClient(Person person) throws InvalidAgeException, DuplicateClientException,
-            SecretaryUnauthorizedException {
-        if (!isCurrSecretary()) throw new SecretaryUnauthorizedException();
-
-            Date currDate = new Date();  // Get current date
-
-            // Get the person's birthdate
-            Date birthdate = person.getBirthdate();
-
-            // Calculate the person's age
-            int age = calcDateDiff(birthdate, currDate);
-
-            // If the person is under 18, return without doing anything
-            if (age < 18) throw new InvalidAgeException();
-            if(gym.clients.contains((Client) person))throw new DuplicateClientException();
-            gym.clients.add((Client) person);
-            System.out.println("Client registered successfully.");
-            return (Client) person;
+    /**
+     * Logs an action to the action log.
+     *
+     * @param action The action to log.
+     */
+    private void logAction(String action) {
+        gym.getActionLog().add(action);
+    }
+    private String dateToString(Date date){
+        return new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
     }
 
-    private int calcDateDiff(Date checkedDate, Date currDate) {
-        // Create a Calendar instance to work with date manipulation
+    public Client registerClient(Person person) throws InvalidAgeException, DuplicateClientException {
+        if (!isCurrSecretary()) throw new NullPointerException();
+        String birthdate = person.getBirthdate();
+        int age = Person.calcDateDiff(birthdate);
+
+        if (age < 18) throw new InvalidAgeException("Error: Client must be at least 18 years old to register");
+        Client client=new Client(person.getName(),person.getBalance(),person.getGender(),person.getBirthdate(),person.getId());
+        if (gym.clients.contains(client)) throw new DuplicateClientException("Error: The client is already registered");
+        gym.clients.add(client);
+        logAction("Registered new client: " + person.getName());
+        return client;
+    }
+    public Person getPerson(){
+        return person;
+    }
+    private int calcDateDiff(Date checkedDate) {
         Calendar birthCalendar = Calendar.getInstance();
         birthCalendar.setTime(checkedDate);
-
         Calendar currentCalendar = Calendar.getInstance();
-        currentCalendar.setTime(currDate);
+        currentCalendar.setTime(new Date());
 
-        // Calculate age by comparing birth year with current year
         int age = currentCalendar.get(Calendar.YEAR) - birthCalendar.get(Calendar.YEAR);
-
-        // Adjust age if the birthday hasn't occurred yet this year
         if (currentCalendar.get(Calendar.MONTH) < birthCalendar.get(Calendar.MONTH) ||
                 (currentCalendar.get(Calendar.MONTH) == birthCalendar.get(Calendar.MONTH) &&
                         currentCalendar.get(Calendar.DAY_OF_MONTH) < birthCalendar.get(Calendar.DAY_OF_MONTH))) {
-            age--; // Person hasn't had their birthday yet this year
+            age--;
         }
-
         return age;
     }
 
-    public Instructor hireInstructor(Person person, int salary, ArrayList<SessionType> sessions)throws SecretaryUnauthorizedException,DuplicateInstructorException {
-        if (!isCurrSecretary()) throw new SecretaryUnauthorizedException();
+    public Instructor hireInstructor(Person person, int salary, ArrayList<SessionType> sessions) {
+        if (!isCurrSecretary()) throw new NullPointerException();
         Instructor instructor = new Instructor(person, salary, sessions);
-        if(gym.instructors.contains(instructor))throw new DuplicateInstructorException();
+        if (!gym.instructors.contains(instructor)) {
             gym.instructors.add(instructor);
-            return instructor;
+            logAction("Hired new instructor: " + person.getName() + " with salary per hour: " + salary);
+        }
+        return instructor;
     }
 
-
-    public void unregisterClient(Client c2) throws ClientNotRegisteredException,SecretaryUnauthorizedException {
-        if(!(gym.clients.contains(c2)))throw new ClientNotRegisteredException();
-        if (!isCurrSecretary()) throw new SecretaryUnauthorizedException();
-            this.gym.clients.remove(c2);
+    public void unregisterClient(Client c2) throws ClientNotRegisteredException {
+        if (!isCurrSecretary()) throw new NullPointerException();
+        if (!gym.clients.contains(c2)) throw new ClientNotRegisteredException("Error: Client not registered");
+        gym.clients.remove(c2);
+        logAction("Unregistered client: " + c2.getName());
     }
 
-    public void registerClientToLesson(Client c1, Session s2)throws SecretaryUnauthorizedException,
-            InvalidAgeException, InstructorNotQualifiedException,DuplicateClientException,FullSessionException
-            ,SessionHasPastException,InvalidGenderException,InsufficientFundsException{
-        if (!isCurrSecretary()) throw new SecretaryUnauthorizedException();
-        Date sessionDate=s2.getDate();
-        Date currDate= new Date();
-        ForumType type=s2.getForum();
-        Gender gender =c1.getGender();
-        int sessionPrice=s2.getPrice();
-        int clientAge=calcDateDiff(c1.getBirthdate(),currDate);
-        int clientBalance=c1.getBalance();
-        boolean isSenior= clientAge >= 65;
-        if(!(s2.getRegistered().size()<s2.getMaxCap()))throw new FullSessionException();
-        if(calcDateDiff(sessionDate,currDate)<0)throw new SessionHasPastException();
-        if(type==ForumType.Male&&gender!=Gender.Male)throw new InvalidGenderException();
-        if(type==ForumType.Female&&gender!=Gender.Female)throw new InvalidGenderException();
-        if(type==ForumType.Seniors&&!isSenior)throw new InvalidAgeException();
-        if(clientBalance<sessionPrice)throw new InsufficientFundsException();
-        s2.addClient(c1);
+    private boolean canAccessSession(Client c1, Session s2) {
+        String sessionDate = s2.getDate();
+        ForumType type = s2.getForum();
+        Gender gender = c1.getGender();
+        int sessionPrice = s2.getPrice();
+        int clientAge = Person.calcDateDiff(c1.getBirthdate());
+        int clientBalance = c1.getBalance();
+        boolean isSenior = clientAge >= 65;
+
+        // Check if the client has enough balance
+        if (clientBalance < sessionPrice) {
+            logAction("Failed registration: Client doesn't have enough balance");
+            return false;
+        }
+
+        // Check if the client's gender matches the session's gender requirements
+        if ((type == ForumType.Female && gender != Gender.Female) || (type == ForumType.Male && gender != Gender.Male)) {
+            logAction("Failed registration: Client's gender doesn't match the session's gender requirements");
+            return false;
+        }
+
+        // Check if the client is old enough for a seniors session
+        if (type == ForumType.Seniors && !isSenior) {
+            logAction("Failed registration: Client doesn't meet the age requirements for this session (Seniors)");
+            return false;
+        }
+
+        // Check if the session is in the future
+        if (!isSessionInTheFuture(sessionDate)) {
+            logAction("Failed registration: Session is not in the future");
+            return false;
+        }
+
+        // Check for available spots in the session
+        if (s2.getRegistered().size() == s2.getMaxCap()) {
+            logAction("Failed registration: No available spots for session");
+            return false;
+        }
+
+        return true;
     }
 
-    public Session addSession(SessionType type, String date, ForumType forum, Instructor instructor) throws SecretaryUnauthorizedException,
-            DuplicateSessionException,InstructorNotQualifiedException{
-        // Check if the current user is the secretary
-        if (!isCurrSecretary()) throw new SecretaryUnauthorizedException();
-        Session s1 = SessionFactory.createSession(type, date, forum, instructor);
-        // Check if the instructor supports the session type
-        if (!instructor.getSessionTypes().contains(type)) throw new InstructorNotQualifiedException();
-        if(gym.sessions.contains(s1)) throw new DuplicateSessionException();
-            gym.sessions.add(s1);
-            return s1;
+    public void registerClientToLesson(Client c1, Session s2) throws DuplicateClientException, ClientNotRegisteredException {
+        if (!isCurrSecretary()) throw new NullPointerException();
+        if (!gym.clients.contains(c1)) throw new ClientNotRegisteredException("Error: The client is not registered with the gym and cannot enroll in lessons");
+        if (s2.getRegistered().contains(c1)) throw new DuplicateClientException("Error: The client is already registered for this lesson");
+        if (canAccessSession(c1, s2)) {
+            s2.addClient(c1);
+            c1.setBalance(c1.getBalance() - s2.getPrice());
+            setGymBalance(getGymBalance() + s2.getPrice());
+            logAction("Registered client: " + c1.getName() + " to session: " + s2.getType() + " on " + convertDateFormat(s2.getDate()) + " for price: " + s2.getPrice());
+        }
     }
+    private boolean isSessionInTheFuture(String sessionDate) {
+        try {
+            // Define the input format for the session date (23-01-2025 10:00)
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+
+            // Parse the session date string to Date object
+            Date parsedSessionDate = sdf.parse(sessionDate);
+
+            // Get the current date and time
+            Calendar currentCalendar = Calendar.getInstance();
+
+            // Compare the parsed session date with the current date
+            return parsedSessionDate.after(currentCalendar.getTime());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false; // Return false in case of any error (e.g., parsing exception)
+        }
+    }
+
+    public void setGymBalance(int balance) {
+        if (!isCurrSecretary()) throw new NullPointerException();
+        gym.balance = balance;
+    }
+
+    public int getGymBalance() {
+        if (!isCurrSecretary()) throw new NullPointerException();
+        return gym.balance;
+    }
+    public static String convertDateFormat(String inputDate) {
+        try {
+            // Define the input format (23-01-2025 10:00)
+            SimpleDateFormat inputFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+
+            // Parse the input date string to a Date object
+            Date date = inputFormat.parse(inputDate);
+
+            // Define the output format (2025-01-23T10:00)
+            SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+
+            // Return the formatted date as a string
+            return outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null; // Return null in case of parsing error
+        }
+    }
+    public Session addSession(SessionType type, String date, ForumType forum, Instructor instructor) throws InstructorNotQualifiedException {
+        if (!isCurrSecretary()) throw new NullPointerException();
+        Session session = SessionFactory.createSession(type, date, forum, instructor);
+
+        if (!instructor.getSessionTypes().contains(type)) {
+            throw new InstructorNotQualifiedException("Error: Instructor is not qualified for this session type.");
+        }
+        if (!gym.sessions.contains(session)) {
+            gym.sessions.add(session);
+            logAction("Created new session: " + type + " on " + convertDateFormat(date) + " with instructor: " + instructor.getPerson().getName());
+        }
+        return session;
+    }
+
     public void paySalaries() {
+        logAction("Salaries have been paid to all employees");
     }
 
+    /**
+     * Prints all logged actions.
+     */
     public void printActions() {
+        for (String action : gym.getActionLog()) {
+            System.out.println(action);
+        }
+    }
+
+    public String displayInfo() {
+        return "ID: " + this.person.getId() +
+                " | Name: " + this.person.getName() +
+                " | Gender: " + this.person.getGender() +
+                " | Birthday: " + this.person.getBirthdate() +
+                " | Age: " + Person.calcDateDiff(this.person.getBirthdate()) +
+                " | Balance: " + this.person.getBalance() +
+                " | Role: Secretary" +
+                " | Salary per Month: " + this.salary;
     }
 }

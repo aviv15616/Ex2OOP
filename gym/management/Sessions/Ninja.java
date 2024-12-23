@@ -5,7 +5,7 @@
             private final int price=150;
             private final int maxCap=5;
             public Ninja(String date,ForumType forum, Instructor instructor,int price,int maxCap){
-                super(SessionType.Pilates, date, forum, instructor,price,maxCap);
+                super(SessionType.Ninja, date, forum, instructor,price,maxCap);
             }
 
         }

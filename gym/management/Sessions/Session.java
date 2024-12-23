@@ -12,7 +12,7 @@ import java.util.Date;
 public class Session {
     private SessionType type;
     private ForumType forum;
-    private Date date;
+    private String date;
     private ArrayList <Client> registered=new ArrayList<>();
     private int price;
     private int maxCap;
@@ -20,7 +20,7 @@ public class Session {
     private Instructor instructor;
     public Session(SessionType type,String date,ForumType forum, Instructor instructor,int price, int maxCap){
         this.type=type;
-        this.date=parseDate(date);
+        this.date=date;
         this.forum=forum;
         this.instructor=instructor;
         this.price=price;
@@ -37,7 +37,10 @@ public class Session {
             return null;
         }
     }
-    public Date getDate(){
+    public SessionType getType(){
+        return type;
+    }
+    public String getDate(){
         return date;
     }
     public ForumType getForum(){

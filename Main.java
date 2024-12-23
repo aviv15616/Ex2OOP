@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Main {
-    public static void main(String[] args) throws InstructorNotQualifiedException, DuplicateClientException, InvalidAgeException, ClientNotRegisteredException, SecretaryUnauthorizedException, DuplicateSessionException, DuplicateInstructorException, InvalidGenderException, InsufficientFundsException, SessionHasPastException, FullSessionException {
+    public static void main(String[] args) throws InstructorNotQualifiedException, DuplicateClientException, InvalidAgeException, ClientNotRegisteredException {
         Person p1 = new Person("David", 500, Gender.Male, "20-02-1978");
         Person p2 = new Person("Nofar", 1200, Gender.Female, "03-07-1998");
         Person p3 = new Person("Maayan", 200, Gender.Female, "21-12-2005");
@@ -101,9 +101,9 @@ public class Main {
             System.out.println(e.getMessage());
         }
 
-        gymSecretary.notify(s4, "The instructor will be a few minutes late for the session");
-        gymSecretary.notify("01-01-2025", "Heavy traffic reported around the gym today. Plan ahead to avoid missing your session!");
-        gymSecretary.notify("Happy New Year to all our valued clients!");
+//        gymSecretary.notify(s4, "The instructor will be a few minutes late for the session");
+//        gymSecretary.notify("01-01-2025", "Heavy traffic reported around the gym today. Plan ahead to avoid missing your session!");
+//        gymSecretary.notify("Happy New Year to all our valued clients!");
 
         gymSecretary.paySalaries();
 
@@ -120,7 +120,7 @@ public class Main {
         System.out.println("\n---Actions history---");
         newGymSecretary.printActions();
 
-        System.out.println("\n" + c1.getName() + " Notifications: " + c1.getNotifications());
+//        System.out.println("\n" + c1.getName() + " Notifications: " + c1.getNotifications());
 
         System.out.println("\n---Gym information---");
 

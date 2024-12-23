@@ -7,6 +7,6 @@ import java.util.ArrayList;
 
 public class MachinePilates extends Session {
     public MachinePilates(String date,ForumType forum, Instructor instructor,int price,int maxCap){
-        super(SessionType.Pilates, date, forum, instructor,price,maxCap);
+        super(SessionType.MachinePilates, date, forum, instructor,price,maxCap);
     }
 }
