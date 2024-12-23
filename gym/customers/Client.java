@@ -1,7 +1,11 @@
 package gym.customers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Client {
     private Person person;
+    private List<String> messageBox=new ArrayList<>();
 
     public Client(Person person) {
         this.person = person;  // A single shared Person instance
@@ -16,6 +20,12 @@ public class Client {
     public boolean equals(Object a){
         Client c1= (Client)a;
         return c1.getPerson().getId()==person.getId();
+    }
+    public List <String> getNotifications(){
+        return messageBox;
+    }
+    public String getName(){
+        return person.getName();
     }
 
 

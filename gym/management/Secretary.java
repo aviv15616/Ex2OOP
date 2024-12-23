@@ -25,6 +25,51 @@ public class Secretary {
         this.salary = salary;
     }
 
+    public void notify(Session s1, String message) {
+        for (Client c1 : gym.clients) {
+            if (s1.getRegistered().contains(c1)) {
+                c1.getNotifications().add(message);
+            }
+        }
+        logAction("A message was sent to everyone registered for session "+s1.getType()+" on "+convertDateFormat(s1.getDate())+" : "+message);
+    }
+    public String reverseDateFormat(String date) {
+        if (date == null || date.isEmpty()) {
+            throw new IllegalArgumentException("Input date cannot be null or empty");
+        }
+
+        // Split the date into parts
+        String[] parts = date.split("-");
+        if (parts.length != 3) {
+            throw new IllegalArgumentException("Input date must be in the format DD-MM-YYYY");
+        }
+
+        // Rearrange and join the parts
+        return parts[2] + "-" + parts[1] + "-" + parts[0];
+    }
+
+
+    public void notify(String date, String message) {
+        for (Client c1 : gym.clients) {
+            for (Session session : gym.sessions) {
+                if (session.getDate().equals(date)) {
+                    if (session.getRegistered().contains(c1)) {
+                        c1.getNotifications().add(message);
+                    }
+                }
+            }
+        }
+        logAction("A message was sent to everyone registered for a session on "+reverseDateFormat(date)+" : "+message);
+
+    }
+
+    public void notify(String message) {
+        for (Client c1 : gym.clients) {
+            c1.getNotifications().add(message);
+        }
+        logAction("A message was sent to all gym clients: "+message);
+    }
+
     private boolean isCurrSecretary() {
         return gym.getSecretary().equals(this);
     }
@@ -202,25 +247,26 @@ public class Secretary {
         }
         return session;
     }
-    public int getSalary(){
+
+    public int getSalary() {
         return salary;
     }
 
     public void paySalaries() {
-        for(Instructor i1: gym.instructors){
-            int count=0;
-            for(Session s1:gym.sessions){
-                if(s1.getInstructor().equals(i1)) count++;
+        for (Instructor i1 : gym.instructors) {
+            int count = 0;
+            for (Session s1 : gym.sessions) {
+                if (s1.getInstructor().equals(i1)) count++;
             }
-            int toAdd=count*i1.getSalary();
-            int currInsBal=i1.getPerson().getBalance();
-            i1.getPerson().setBalance(currInsBal+toAdd);
-            setGymBalance(getGymBalance()-toAdd);
+            int toAdd = count * i1.getSalary();
+            int currInsBal = i1.getPerson().getBalance();
+            i1.getPerson().setBalance(currInsBal + toAdd);
+            setGymBalance(getGymBalance() - toAdd);
         }
-        int toAddSec=gym.getSecretary().salary;
-        int currSecBal=gym.getSecretary().getPerson().getBalance();
-        gym.getSecretary().getPerson().setBalance(currSecBal+toAddSec);
-        setGymBalance(getGymBalance()-toAddSec);
+        int toAddSec = gym.getSecretary().salary;
+        int currSecBal = gym.getSecretary().getPerson().getBalance();
+        gym.getSecretary().getPerson().setBalance(currSecBal + toAddSec);
+        setGymBalance(getGymBalance() - toAddSec);
         logAction("Salaries have been paid to all employees");
     }
 
@@ -232,7 +278,8 @@ public class Secretary {
             System.out.println(action);
         }
     }
-@Override
+
+    @Override
     public String toString() {
         return "ID: " + this.person.getId() +
                 " | Name: " + this.person.getName() +

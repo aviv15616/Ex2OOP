@@ -101,9 +101,9 @@ public class Main {
             System.out.println(e.getMessage());
         }
 
-//        gymSecretary.notify(s4, "The instructor will be a few minutes late for the session");
-//        gymSecretary.notify("01-01-2025", "Heavy traffic reported around the gym today. Plan ahead to avoid missing your session!");
-//        gymSecretary.notify("Happy New Year to all our valued clients!");
+        gymSecretary.notify(s4, "The instructor will be a few minutes late for the session");
+        gymSecretary.notify("01-01-2025", "Heavy traffic reported around the gym today. Plan ahead to avoid missing your session!");
+        gymSecretary.notify("Happy New Year to all our valued clients!");
 
         gymSecretary.paySalaries();
 
@@ -120,7 +120,7 @@ public class Main {
         System.out.println("\n---Actions history---");
         newGymSecretary.printActions();
 
-//        System.out.println("\n" + c1.getName() + " Notifications: " + c1.getNotifications());
+        System.out.println("\n" + c1.getName() + " Notifications: " + c1.getNotifications());
 
         System.out.println("\n---Gym information---");
 
