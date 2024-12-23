@@ -202,9 +202,25 @@ public class Secretary {
         }
         return session;
     }
+    public int getSalary(){
+        return salary;
+    }
 
     public void paySalaries() {
-
+        for(Instructor i1: gym.instructors){
+            int count=0;
+            for(Session s1:gym.sessions){
+                if(s1.getInstructor().equals(i1)) count++;
+            }
+            int toAdd=count*i1.getSalary();
+            int currInsBal=i1.getPerson().getBalance();
+            i1.getPerson().setBalance(currInsBal+toAdd);
+            setGymBalance(getGymBalance()-toAdd);
+        }
+        int toAddSec=gym.getSecretary().salary;
+        int currSecBal=gym.getSecretary().getPerson().getBalance();
+        gym.getSecretary().getPerson().setBalance(currSecBal+toAddSec);
+        setGymBalance(getGymBalance()-toAddSec);
         logAction("Salaries have been paid to all employees");
     }
 
@@ -216,8 +232,8 @@ public class Secretary {
             System.out.println(action);
         }
     }
-
-    public String displayInfo() {
+@Override
+    public String toString() {
         return "ID: " + this.person.getId() +
                 " | Name: " + this.person.getName() +
                 " | Gender: " + this.person.getGender() +

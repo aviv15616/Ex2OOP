@@ -80,7 +80,7 @@ public class Main {
         gymSecretary.registerClientToLesson(c5, s2);//not gender, not future,
         gymSecretary.registerClientToLesson(c5, s2);
 
-        gymSecretary.registerClientToLesson(c1, s5);
+        gymSecretary.registerClientToLesson(c1, s5);//good
         gymSecretary.registerClientToLesson(c2, s5);
         gymSecretary.registerClientToLesson(c3, s5);
         gymSecretary.registerClientToLesson(c4, s5);

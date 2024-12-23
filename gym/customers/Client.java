@@ -10,5 +10,11 @@ public class Client extends Person {
         Client c1=(Client)a;
         return this.id==c1.getId();
     }
+    @Override
+    public String toString(){
+        String info="ID: "+id+" | Name: "+getName()+" | Gender: "+getGender()+" | Birthday: "+getBirthdate()+" | Age: "+calcDateDiff(getBirthdate())+" | Balance: "+getBalance();
+        return info;
+    }
+
 
 }

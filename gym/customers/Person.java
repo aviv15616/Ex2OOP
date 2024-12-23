@@ -110,6 +110,7 @@ public class Person {
     public String toString() {
         return "ID: " + id + " | Name: " + name + " | Gender: " + gender + " | Birthday: " + birthdate + " | Age: " + calcDateDiff(birthdate) + " | Balance: " + balance;
     }
+
     public int getId(){
         return id;
     }
