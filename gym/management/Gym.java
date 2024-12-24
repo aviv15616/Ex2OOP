@@ -53,7 +53,6 @@ public class Gym {
         // Gym basic details
         info.append("Gym Name: ").append(this.name).append("\n")
                 .append("Gym Secretary: ").append(secretary.toString()).append("\n")
-                .append("Secretary | Salary per Month: ").append(secretary.getSalary()).append("\n")
                 .append("Gym Balance: ").append(this.balance).append("\n\n");
 
         // Clients Data
