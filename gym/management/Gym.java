@@ -19,7 +19,6 @@ public class Gym {
     final List<Instructor> instructors = new ArrayList<>();
     private final List<String> actionLog = new LinkedList<>(); // Stores logged actions
 
-
     private Gym() {
     }
 
@@ -31,7 +30,6 @@ public class Gym {
     public List<String> getActionLog() {
         return actionLog;
     }
-
 
     public void setSecretary(Person person, int salary) {
         this.secretary = new Secretary(person, salary);
@@ -51,31 +49,33 @@ public class Gym {
         StringBuilder info = new StringBuilder();
 
         // Gym basic details
-        info.append("Gym Name: ").append(this.name).append("\n")
-                .append("Gym Secretary: ").append(secretary.toString()).append("\n")
-                .append("Gym Balance: ").append(this.balance).append("\n\n");
+        System.out.print("Gym Name: " + this.name + "\n");
+        System.out.print("Gym Secretary: " + secretary.toString());
+        System.out.println("Gym Balance: " + this.balance + "\n");
 
         // Clients Data
-        info.append("Clients Data:\n");
+        System.out.print("Clients Data:\n");
         for (Client client : clients) { // Assuming 'clients' is a list of Client objects
-            info.append(client.toString()).append("\n");
+            System.out.print(client.toString() + "\n");
         }
-        info.append("\n");
 
         // Employees Data
-        info.append("Employees Data:\n");
+        System.out.print("\nEmployees Data:\n");
         for (Instructor instructor : instructors) { // Assuming 'instructors' is a list of Instructor objects
-            info.append(instructor.toString()).append("\n");
+            System.out.print(instructor.toString() + "\n");
         }
-        info.append(secretary.toString()).append("\n\n"); // Including secretary in employees list
+        System.out.print(secretary.toString() + "\n"); // Including secretary in employees list
 
         // Sessions Data
-        info.append("Sessions Data:\n");
-        for (Session session : sessions) { // Assuming 'sessions' is a list of Session objects
-            info.append(session.toString()).append("\n");
+        System.out.print("Sessions Data:\n");
+        for (int i = 0; i < sessions.size(); i++) { // Assuming 'sessions' is a list of Session objects
+            if (i == sessions.size() - 1) {
+                // Print the last session without a trailing blank line
+                System.out.print(sessions.get(i).toString());
+            } else {
+                System.out.print(sessions.get(i).toString() + "\n");
+            }
         }
-
-        return info.toString();
+        return "";
     }
-
 }

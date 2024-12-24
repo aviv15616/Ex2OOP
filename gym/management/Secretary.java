@@ -31,8 +31,9 @@ public class Secretary {
                 c1.getNotifications().add(message);
             }
         }
-        logAction("A message was sent to everyone registered for session "+s1.getType()+" on "+convertDateFormat(s1.getDate())+" : "+message);
+        logAction("A message was sent to everyone registered for session " + s1.getType() + " on " + convertDateFormat(s1.getDate()) + " : " + message);
     }
+
     public String reverseDateFormat(String date) {
         if (date == null || date.isEmpty()) {
             throw new IllegalArgumentException("Input date cannot be null or empty");
@@ -52,14 +53,14 @@ public class Secretary {
     public void notify(String date, String message) {
         for (Client c1 : gym.clients) {
             for (Session session : gym.sessions) {
-                if (session.getDate().substring(0,10).equals(date)) {
+                if (session.getDate().substring(0, 10).equals(date)) {
                     if (session.getRegistered().contains(c1)) {
                         c1.getNotifications().add(message);
                     }
                 }
             }
         }
-        logAction("A message was sent to everyone registered for a session on "+reverseDateFormat(date)+" : "+message);
+        logAction("A message was sent to everyone registered for a session on " + reverseDateFormat(date) + " : " + message);
 
     }
 
@@ -67,7 +68,7 @@ public class Secretary {
         for (Client c1 : gym.clients) {
             c1.getNotifications().add(message);
         }
-        logAction("A message was sent to all gym clients: "+message);
+        logAction("A message was sent to all gym clients: " + message);
     }
 
     private boolean isCurrSecretary() {
@@ -131,7 +132,8 @@ public class Secretary {
 
     public void unregisterClient(Client c2) throws ClientNotRegisteredException {
         if (!isCurrSecretary()) throw new NullPointerException();
-        if (!gym.clients.contains(c2)) throw new ClientNotRegisteredException("Error: Registration is required before attempting to unregister");
+        if (!gym.clients.contains(c2))
+            throw new ClientNotRegisteredException("Error: Registration is required before attempting to unregister");
         gym.clients.remove(c2);
         logAction("Unregistered client: " + c2.getPerson().getName());
     }
@@ -275,7 +277,7 @@ public class Secretary {
      */
     public void printActions() {
         for (String action : gym.getActionLog()) {
-            System.out.println(action);
+            System.out.print(action + "\n"); // Use \n explicitly
         }
     }
 
@@ -288,6 +290,6 @@ public class Secretary {
                 " | Age: " + Person.calcDateDiff(this.person.getBirthdate()) +
                 " | Balance: " + this.person.getBalance() +
                 " | Role: Secretary" +
-                " | Salary per Month: " + this.salary;
+                " | Salary per Month: " + this.salary + "\n"; // Explicit \n added
     }
 }
