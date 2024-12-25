@@ -30,25 +30,9 @@ public class Secretary {
      * @param person The personal information of the secretary.
      * @param salary The monthly salary of the secretary.
      */
-    public Secretary(Person person, int salary) {
+    protected Secretary(Person person, int salary) {
         this.person = person;
         this.salary = salary;
-    }
-
-
-    /**
-     * Sends a notification to all clients registered for a specific session.
-     *
-     * @param s1      The session for which clients will be notified.
-     * @param message The notification message to send.
-     */
-    public void notify(Session s1, String message) {
-        for (Client c1 : gym.clients) {
-            if (s1.getRegistered().contains(c1)) {
-                c1.getNotifications().add(message);
-            }
-        }
-        logAction("A message was sent to everyone registered for session " + s1.getType() + " on " + convertDateFormat(s1.getDate()) + " : " + message);
     }
 
     /**
@@ -58,7 +42,7 @@ public class Secretary {
      * @return The reversed date format string.
      * @throws IllegalArgumentException If the date is null, empty, or in an invalid format.
      */
-    public String reverseDateFormat(String date) {
+    private String reverseDateFormat(String date) {
         if (date == null || date.isEmpty()) {
             throw new IllegalArgumentException("Input date cannot be null or empty");
         }
@@ -72,14 +56,32 @@ public class Secretary {
         // Rearrange and join the parts
         return parts[2] + "-" + parts[1] + "-" + parts[0];
     }
+    /**
+     * Sends a notification to all clients registered for a specific session.
+     *
+     * @param s1      The session for which clients will be notified.
+     * @param message The notification message to send.
+     * @throws NullPointerException         If the current user is not the gym's secretary.
+     */
+    public void notify(Session s1, String message) {
+        if(!isCurrSecretary()) throw new NullPointerException();
+        for (Client c1 : gym.clients) {
+            if (s1.getRegistered().contains(c1)) {
+                c1.getNotifications().add(message);
+            }
+        }
+        logAction("A message was sent to everyone registered for session " + s1.getType() + " on " + convertDateFormat(s1.getDate()) + " : " + message);
+    }
 
     /**
      * Sends a notification to all clients registered for any session on a specific date.
      *
      * @param date    The date for which notifications will be sent.
      * @param message The notification message to send.
+     * @throws NullPointerException         If the current user is not the gym's secretary.
      */
     public void notify(String date, String message) {
+        if(!isCurrSecretary()) throw new NullPointerException();
         for (Client c1 : gym.clients) {
             for (Session session : gym.sessions) {
                 if (session.getDate().substring(0, 10).equals(date)) {
@@ -90,15 +92,17 @@ public class Secretary {
             }
         }
         logAction("A message was sent to everyone registered for a session on " + reverseDateFormat(date) + " : " + message);
-
     }
 
     /**
      * Sends a notification to all gym clients.
      *
      * @param message The notification message to send.
+     * @throws NullPointerException         If the current user is not the gym's secretary.
      */
     public void notify(String message) {
+        if(!isCurrSecretary()) throw new NullPointerException();
+
         for (Client c1 : gym.clients) {
             c1.getNotifications().add(message);
         }
@@ -118,8 +122,10 @@ public class Secretary {
      * Logs an action to the gym's action log.
      *
      * @param action The action to log.
+     * @throws NullPointerException         If the current user is not the gym's secretary.
      */
     protected void logAction(String action) {
+        if(!isCurrSecretary()) throw new NullPointerException();
         gym.getActionLog().add(action);
     }
 
@@ -130,11 +136,12 @@ public class Secretary {
      * @return The registered Client object.
      * @throws InvalidAgeException      If the client is under 18 years old.
      * @throws DuplicateClientException If the client is already registered.
+     * @throws NullPointerException         If the current user is not the gym's secretary.
      */
     public Client registerClient(Person person) throws InvalidAgeException, DuplicateClientException {
         if (!isCurrSecretary()) throw new NullPointerException();
         String birthdate = person.getBirthdate();
-        int age = Person.calcDateDiff(birthdate);
+        int age = Person.calcAge(birthdate);
 
         if (age < 18) throw new InvalidAgeException("Error: Client must be at least 18 years old to register");
         Client client = new Client(person);
@@ -149,7 +156,7 @@ public class Secretary {
      *
      * @return The {@link Person} object associated with this instance.
      */
-    public Person getPerson() {
+    protected Person getPerson() {
         return person;
     }
 
@@ -160,6 +167,7 @@ public class Secretary {
      * @param salary   The hourly salary of the instructor.
      * @param sessions The session types the instructor is certified to teach.
      * @return The hired Instructor object.
+     * @throws NullPointerException         If the current user is not the gym's secretary.
      */
     public Instructor hireInstructor(Person person, int salary, ArrayList<SessionType> sessions) {
         if (!isCurrSecretary()) throw new NullPointerException();
@@ -176,6 +184,7 @@ public class Secretary {
      *
      * @param c2 The client to unregister.
      * @throws ClientNotRegisteredException If the client is not registered.
+     * @throws NullPointerException         If the current user is not the gym's secretary.
      */
     public void unregisterClient(Client c2) throws ClientNotRegisteredException {
         if (!isCurrSecretary()) throw new NullPointerException();
@@ -198,7 +207,7 @@ public class Secretary {
         ForumType type = s2.getForum();
         Gender gender = c1.getPerson().getGender();
         int sessionPrice = s2.getPrice();
-        int clientAge = Person.calcDateDiff(c1.getPerson().getBirthdate());
+        int clientAge = Person.calcAge(c1.getPerson().getBirthdate());
         int clientBalance = c1.getPerson().getBalance();
         boolean isSenior = clientAge >= 65;
         List<String> errors = new ArrayList<>();
@@ -246,7 +255,7 @@ public class Secretary {
         if (s2.getRegistered().contains(c1))// Check if the client is already registered for the session
             throw new DuplicateClientException("Error: The client is already registered for this lesson");
         if (canAccessSession(c1, s2)) {// Check if the client meets all criteria for session access
-            s2.addClient(c1);
+            s2.getRegistered().add(c1);
             c1.getPerson().setBalance(c1.getPerson().getBalance() - s2.getPrice());
             setGymBalance(getGymBalance() + s2.getPrice());
             logAction("Registered client: " + c1.getPerson().getName() + " to session: " + s2.getType() + " on " + convertDateFormat(s2.getDate()) + " for price: " + s2.getPrice());// Log the registration details
@@ -284,7 +293,7 @@ public class Secretary {
      * @param balance The new balance to set for the gym.
      * @throws NullPointerException If the current user is not the gym's secretary.
      */
-    public void setGymBalance(int balance) {
+    private void setGymBalance(int balance) {
         if (!isCurrSecretary()) throw new NullPointerException();
         gym.balance = balance;
     }
@@ -295,7 +304,7 @@ public class Secretary {
      * @return The current balance of the gym.
      * @throws NullPointerException If the current user is not the gym's secretary.
      */
-    public int getGymBalance() {
+    private int getGymBalance() {
         if (!isCurrSecretary()) throw new NullPointerException();
         return gym.balance;
     }
@@ -307,7 +316,7 @@ public class Secretary {
      * @return The date formatted as a string in the new format, or {@code null} if a parsing error occurs.
      * @throws NullPointerException If the input date string is null.
      */
-    public static String convertDateFormat(String inputDate) {
+    private String convertDateFormat(String inputDate) {
         try {
             // Define the input format (23-01-2025 10:00)
             SimpleDateFormat inputFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
@@ -356,14 +365,16 @@ public class Secretary {
      *
      * @return The salary of the person (for example, the secretary).
      */
-    public int getSalary() {
+    private int getSalary() {
         return salary;
     }
 
     /**
      * Pays salaries to all gym employees, including instructors and the secretary.
+     * @throws NullPointerException            If the current user is not the gym's secretary.
      */
     public void paySalaries() {
+        if(!isCurrSecretary()) throw new NullPointerException();
         for (Instructor i1 : gym.instructors) {
             int count = 0;
             for (Session s1 : gym.sessions) {
@@ -383,8 +394,10 @@ public class Secretary {
 
     /**
      * Prints all logged actions.
+     * @throws NullPointerException            If the current user is not the gym's secretary.
      */
     public void printActions() {
+        if(!isCurrSecretary()) throw new NullPointerException();
         for (String action : gym.getActionLog()) {
             System.out.print(action + "\n"); // Use \n explicitly
         }
@@ -401,7 +414,7 @@ public class Secretary {
                 " | Name: " + this.person.getName() +
                 " | Gender: " + this.person.getGender() +
                 " | Birthday: " + this.person.getBirthdate() +
-                " | Age: " + Person.calcDateDiff(this.person.getBirthdate()) +
+                " | Age: " + Person.calcAge(this.person.getBirthdate()) +
                 " | Balance: " + this.person.getBalance() +
                 " | Role: Secretary" +
                 " | Salary per Month: " + this.salary + "\n"; // Explicit \n added

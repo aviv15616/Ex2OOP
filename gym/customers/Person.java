@@ -61,12 +61,12 @@ public class Person {
     }
 
     /**
-     * Calculates the age of the person based on the birthdate.
+     * Calculates the age of a person based on the birthdate.
      *
      * @param birthdate The person's birthdate in "dd-MM-yyyy" format.
      * @return The person's age in years or -1 if there's an error parsing the date.
      */
-    public static int calcDateDiff(String birthdate) {
+    public static int calcAge(String birthdate) {
         try {
             // Define the date format for the input birthdate string
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
@@ -113,7 +113,7 @@ public class Person {
 
     @Override
     public String toString() {
-        return "ID: " + id + " | Name: " + name + " | Gender: " + gender + " | Birthday: " + birthdate + " | Age: " + calcDateDiff(birthdate) + " | Balance: " + balance;
+        return "ID: " + id + " | Name: " + name + " | Gender: " + gender + " | Birthday: " + birthdate + " | Age: " + calcAge(birthdate) + " | Balance: " + balance;
     }
 
 

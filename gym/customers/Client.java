@@ -10,8 +10,8 @@ import java.util.List;
  * in their message box, which can be used to store notifications or other information.
  */
 public class Client {
-    private Person person;
-    private List<String> messageBox = new ArrayList<>();
+    private final Person person;
+    private final List<String> messageBox = new ArrayList<>();
 
     /**
      * Constructs a new Client with the given {@link Person}.
@@ -29,7 +29,7 @@ public class Client {
      */
     @Override
     public String toString() {
-        String info = "ID: " + person.getId() + " | Name: " + person.getName() + " | Gender: " + person.getGender() + " | Birthday: " + person.getBirthdate() + " | Age: " + Person.calcDateDiff(person.getBirthdate()) + " | Balance: " + person.getBalance();
+        String info = "ID: " + person.getId() + " | Name: " + person.getName() + " | Gender: " + person.getGender() + " | Birthday: " + person.getBirthdate() + " | Age: " + Person.calcAge(person.getBirthdate()) + " | Balance: " + person.getBalance();
         return info;
     }
 

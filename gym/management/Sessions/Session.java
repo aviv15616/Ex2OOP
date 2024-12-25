@@ -29,7 +29,7 @@ public class Session {
      * @param price      The price of the session.
      * @param maxCap     The maximum capacity for the session.
      */
-    public Session(SessionType type, String date, ForumType forum, Instructor instructor, int price, int maxCap) {
+    protected Session(SessionType type, String date, ForumType forum, Instructor instructor, int price, int maxCap) {
         this.type = type;
         this.date = date;
         this.forum = forum;
@@ -102,14 +102,6 @@ public class Session {
         return price;
     }
 
-    /**
-     * Adds a client to the list of registered participants for this session.
-     *
-     * @param c1 The client to be added to the session.
-     */
-    public void addClient(Client c1) {
-        registered.add(c1);
-    }
 
     /**
      * Provides a string representation of the session, including key details like type, date, forum, instructor, and participant count.

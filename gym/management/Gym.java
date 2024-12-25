@@ -18,12 +18,12 @@ import java.util.List;
 public class Gym {
 
     private static Gym instance; // Singleton instance of the Gym class
-    public int balance;
+    protected int balance;
     private String name;
     private Secretary secretary;
-    final List<Session> sessions = new ArrayList<>();
-    final List<Client> clients = new ArrayList<>();
-    final List<Instructor> instructors = new ArrayList<>();
+    protected final List<Session> sessions = new ArrayList<>();
+    protected final List<Client> clients = new ArrayList<>();
+    protected final List<Instructor> instructors = new ArrayList<>();
     protected final List<String> actionLog = new LinkedList<>(); // Stores logged actions
 
     /**
@@ -54,7 +54,7 @@ public class Gym {
     }
 
     /**
-     * Retrieves the secretary of the gym.
+     * Retrieves the current secretary of the gym.
      *
      * @return the secretary object
      */
@@ -76,13 +76,13 @@ public class Gym {
      *
      * @return the list of logged actions
      */
-    public List<String> getActionLog() {
+    protected List<String> getActionLog() {
         return actionLog;
     }
 
     /**
-     * Returns a string representation of the gym, including its name, secretary, balance, clients,
-     * instructors, and sessions.
+     * Returns a string representation of the gym, including its name, secretary, balance, clients data,
+     * instructors data, and sessions data.
      *
      * @return the string representation of the gym
      */

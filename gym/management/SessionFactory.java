@@ -1,5 +1,6 @@
-package gym.management.Sessions;
+package gym.management;
 import gym.customers.Instructor;
+import gym.management.Sessions.*;
 
 public class SessionFactory {
     /**
@@ -14,7 +15,7 @@ public class SessionFactory {
      * @return The created session object corresponding to the session type.
      * @throws IllegalArgumentException if an unsupported session type is provided.
      */
-    public static Session createSession(SessionType type, String date, ForumType forum, Instructor instructor) {
+    protected static Session createSession(SessionType type, String date, ForumType forum, Instructor instructor) {
         return switch (type) {
             case Pilates -> new Pilates(date, forum, instructor, 60, 30);
             case MachinePilates -> new MachinePilates(date, forum, instructor, 80, 10);

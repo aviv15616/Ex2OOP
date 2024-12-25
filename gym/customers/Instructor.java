@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class Instructor {
     private final Person person;
     private final int salary;
-    private ArrayList<SessionType> sessionTypes;
+    private final ArrayList<SessionType> sessionTypes;
 
     /**
      * Constructs a new Instructor object.
@@ -62,7 +62,7 @@ public class Instructor {
      *
      * @return a comma-separated string of session types
      */
-    public String stringSessionTypes() {
+    private String stringSessionTypes() {
         StringBuilder string = new StringBuilder();
         for (int i = 0; i < sessionTypes.size(); i++) {
             SessionType currType = sessionTypes.get(i);
@@ -95,7 +95,7 @@ public class Instructor {
      */
     @Override
     public String toString() {
-        String info = "ID: " + person.getId() + " | Name: " + person.getName() + " | Gender: " + person.getGender() + " | Birthday: " + person.getBirthdate() + " | Age: " + Person.calcDateDiff(person.getBirthdate()) + " | Balance: " + person.getBalance() +
+        String info = "ID: " + person.getId() + " | Name: " + person.getName() + " | Gender: " + person.getGender() + " | Birthday: " + person.getBirthdate() + " | Age: " + Person.calcAge(person.getBirthdate()) + " | Balance: " + person.getBalance() +
                 " | Role: Instructor | Salary per Hour: " + salary + " | Certified Classes: " + stringSessionTypes();
         return info;
 
