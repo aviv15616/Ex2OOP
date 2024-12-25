@@ -5,15 +5,28 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * Represents a person (client or instructor) in the gym system.
+ * <p>
+ * The class stores personal information such as name, balance, gender, and birthdate,
+ * as well as providing methods for calculating age and managing the person's details.
+ */
 public class Person {
-    private String name;
+    private final String name;
     private int balance;
-    private Gender gender;
-    private String birthdate;
+    private final Gender gender;
+    private final String birthdate;
     private static int nextId = 1111; // Start ID sequence
     public int id;
 
-    // Constructor
+    /**
+     * Constructs a new Person object with the given details.
+     *
+     * @param name      The name of the person.
+     * @param balance   The balance associated with the person.
+     * @param gender    The gender of the person (Male/Female).
+     * @param birthdate The birthdate of the person in "dd-MM-yyyy" format.
+     */
     public Person(String name, int balance, Gender gender, String birthdate) {
         this.id = nextId++; // Assign unique ID and increment
         this.name = name;
@@ -22,24 +35,9 @@ public class Person {
         this.birthdate = birthdate;
     }
 
-    // Method to parse birthdate from string to Date object
-    private Date parseDate(String dateString) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-        try {
-            return sdf.parse(dateString);
-        } catch (ParseException e) {
-            System.out.println("Error parsing date: " + e.getMessage());
-            return null;
-        }
-    }
-
     // Getters and setters
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public int getBalance() {
@@ -54,13 +52,20 @@ public class Person {
         return gender;
     }
 
-    public void setGender(Gender gender) {
-        this.gender = gender;
-    }
-
     public String getBirthdate() {
         return birthdate;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    /**
+     * Calculates the age of the person based on the birthdate.
+     *
+     * @param birthdate The person's birthdate in "dd-MM-yyyy" format.
+     * @return The person's age in years or -1 if there's an error parsing the date.
+     */
     public static int calcDateDiff(String birthdate) {
         try {
             // Define the date format for the input birthdate string
@@ -100,18 +105,16 @@ public class Person {
     }
 
 
-    public void setBirthdate(String birthdate) {
-        this.birthdate = birthdate;
-    }
-
-    // Method to display Person info
+    /**
+     * Returns a string representation of the person, including their ID, name, gender, birthdate, age, and balance.
+     *
+     * @return A string containing the person's information.
+     */
 
     @Override
     public String toString() {
         return "ID: " + id + " | Name: " + name + " | Gender: " + gender + " | Birthday: " + birthdate + " | Age: " + calcDateDiff(birthdate) + " | Balance: " + balance;
     }
 
-    public int getId(){
-        return id;
-    }
+
 }
